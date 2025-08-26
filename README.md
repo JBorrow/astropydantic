@@ -11,6 +11,14 @@ We provide three types:
   array types.
 - `AstroPydanticTime`: an overlay for `astropy.time.Time`.
 
+Installation
+------------
+
+The package can be installed from pypi:
+```
+pip install astropydantic
+```
+
 Example usage
 -------------
 
