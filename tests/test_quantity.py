@@ -104,4 +104,4 @@ def test_fail_compare_units():
         x: AstroPydanticQuantity[u.g]
 
     with pytest.raises(ValidationError):
-        m = TestModel(x={"value": [0.1, 0.1, 0.2], "unit": "m"})
+        TestModel(x={"value": [0.1, 0.1, 0.2], "unit": "m"})
