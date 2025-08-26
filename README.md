@@ -4,11 +4,12 @@ AstroPydantic
 An (**unofficial**) package providing pydantic typing support for astropy
 unit types. Can be used to de(serialize) astropy quantities and units.
 
-We provide two types:
+We provide three types:
 
 - `AstroPydanticUnit`: an overlay for `astropy.units.UnitBase` (all unit types).
 - `AstroPydanticQuantity`: an overlay for `astropy.units.Quantity`, including
   array types.
+- `AstroPydanticTime`: an overlay for `astropy.time.Time`.
 
 Example usage
 -------------
@@ -98,3 +99,37 @@ my_model = MyModel(a="10.0 g")
 >>>   Value error, 'g' (mass) and 'm' (length) are not convertible [type=value_error, input_value=<Quantity 10. g>, input_type=Quantity]
 >>>     For further information visit https://errors.pydantic.dev/2.11/v/value_error
 ```
+
+### Times
+
+Times are handled similarly, with the output format (either `isot_X` where `X` is the precision,
+or `datetime` for the native python datetime) determined by
+`astropydantic.TIME_OUTPUT_FORMAT`:
+
+```python
+import astropydantic
+import datetime
+from pydantic import BaseModel
+from astropydantic import AstroPydanticTime
+
+class MyModel(BaseModel):
+  a: AstroPydanticTime
+
+model = MyModel(a=datetime.datetime.now())
+
+print(model)
+>>> a=<Time object: scale='utc' format='datetime' value=2025-08-26 12:24:00.143664>
+
+>>> print(model.model_dump())
+{'a': '2025-08-26T12:24:00.143664000'}
+print(model.model_dump_json())
+>>> {"a":"2025-08-26T12:24:00.143664000"}
+
+astropydantic.TIME_OUTPUT_FORMAT = "datetime"
+print(model.model_dump())
+>>> {'a': datetime.datetime(2025, 8, 26, 12, 24, 0, 143664)}
+print(model.model_dump_json())
+>>> {"a":"2025-08-26T12:24:00.143664"}
+```
+
+The string format defaults to `isot_9`.
