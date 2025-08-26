@@ -37,13 +37,9 @@ class _AstropyQuantityPydanticTypeAnnotation(type):
             return Quantity(value)
 
         def json_serialize_value(q: Quantity):
-            # Need to handle that value could be an array or a value.
-            try:
-                iter(q.value)
-                return {"value": q.value.tolist(), "unit": q.unit.to_string()}
-            except TypeError:
-                # Not iterable, easy.
-                return {"value": q.value, "unit": q.unit.to_string()}
+            # Serialize to the native types when going to JSON, numpy
+            # arrays are not supported.
+            return {"value": q.value.tolist(), "unit": q.unit.to_string()}
 
         str_schema = core_schema.chain_schema(
             [
