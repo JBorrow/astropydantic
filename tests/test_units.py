@@ -1,0 +1,39 @@
+"""
+Test that (de)serialization works
+"""
+
+from astropy import units as u
+from astropydantic import AstroPydanticUnit
+from pydantic import BaseModel
+
+def test_unit_string():
+    class TestModel(BaseModel):
+        x: AstroPydanticUnit
+
+    m = TestModel(x="m")
+
+    assert isinstance(m.x, u.core.UnitBase)
+
+    serialized = m.model_dump()
+    TestModel.model_validate(serialized)
+
+    json = m.model_dump_json()
+    TestModel.model_validate_json(json)
+
+
+def test_unit_type():
+    class TestModel(BaseModel):
+        x: AstroPydanticUnit
+
+    m = TestModel(x=u.m)
+
+    assert isinstance(m.x, u.core.UnitBase)
+
+    serialized = m.model_dump()
+
+    reconstructed = TestModel.model_validate(serialized)
+    
+    assert isinstance(reconstructed.x, u.core.UnitBase)
+
+    json = m.model_dump_json()
+    TestModel.model_validate_json(json)

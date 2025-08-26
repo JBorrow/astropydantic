@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "astropydantic"
+version = "0.0.1"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic",
+    "astropy"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "coverage",
+    "pytest-cov",
+    "pre-commit",
+]
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.coverage.run]
+source = [
+    "astropydantic",
+]
