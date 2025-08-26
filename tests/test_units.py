@@ -39,3 +39,23 @@ def test_unit_type():
 
     json = m.model_dump_json()
     TestModel.model_validate_json(json)
+
+
+def test_unit_string_format():
+    class TestModel(BaseModel):
+        x: AstroPydanticUnit
+
+    m = TestModel(x=u.km / u.s**2)
+
+    assert m.model_dump_json() == '{"x":"km.s**-2"}'
+
+    import astropydantic
+
+    astropydantic.UNIT_STRING_FORMAT = "fits"
+
+    class TestModel(BaseModel):
+        x: AstroPydanticUnit
+
+    m = TestModel(x=u.km / u.s**2)
+
+    assert m.model_dump_json() != '{"x":"km.s**-2"}'

@@ -1,4 +1,7 @@
-from .quantity import AstroPydanticQuantity
-from .unit import AstroPydanticUnit
+UNIT_STRING_FORMAT = "vounit"  # Must be at the top to prevent circular imports
 
-__all__ = ["AstroPydanticUnit", "AstroPydanticQuantity"]
+from .quantity import AstroPydanticQuantity  # noqa: E402 I001
+from .unit import AstroPydanticUnit  # noqa: E402 I001
+
+
+__all__ = ["AstroPydanticUnit", "AstroPydanticQuantity", "UNIT_STRING_FORMAT"]

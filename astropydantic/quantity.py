@@ -39,7 +39,13 @@ class _AstropyQuantityPydanticTypeAnnotation(type):
         def json_serialize_value(q: Quantity):
             # Serialize to the native types when going to JSON, numpy
             # arrays are not supported.
-            return {"value": q.value.tolist(), "unit": q.unit.to_string()}
+            # Must import every time in case someone has changed it!
+            from astropydantic import UNIT_STRING_FORMAT
+
+            return {
+                "value": q.value.tolist(),
+                "unit": q.unit.to_string(format=UNIT_STRING_FORMAT),
+            }
 
         str_schema = core_schema.chain_schema(
             [

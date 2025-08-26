@@ -30,6 +30,29 @@ my_model.units.to("m")
 >>> 1000.0
 ```
 
+By default, strings are formatted according to the `vounit` specification. You can
+change this to any supported configuration from astropy using the module-level
+constant `UNIT_STRING_FORMAT`:
+
+```python
+import astropydantic
+from astropydantic import AstroPydanticUnit
+from pydantic import BaseModel
+
+class MyModel(BaseModel):
+  units: AstroPydanticUnit
+
+my_model = MyModel(units="km / s")
+
+print(my_model.model_dump_json())
+>>> {"units":"km.s**-1"}
+
+astropydantic.UNIT_STRING_FORMAT = "fits"
+print(my_model.model_dump_json())
+>>> {"units":"km s-1"}
+```
+
+
 ### Quantities
 
 Regular quantities are supported, and are converted from either strings or

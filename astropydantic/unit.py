@@ -22,6 +22,12 @@ class _AstropyUnitPydanticTypeAnnotation(type):
             ]
         )
 
+        def serialize_to_string(value: Unit) -> str:
+            # Must import every time in case someone has changed it!
+            from astropydantic import UNIT_STRING_FORMAT
+
+            return value.to_string(format=UNIT_STRING_FORMAT)
+
         return core_schema.json_or_python_schema(
             json_schema=from_string_schema,
             python_schema=core_schema.union_schema(
@@ -32,7 +38,7 @@ class _AstropyUnitPydanticTypeAnnotation(type):
             ),
             # If we're just serializing to a dict, keep it as a Unit.
             serialization=core_schema.plain_serializer_function_ser_schema(
-                lambda instance: str(instance), when_used="json-unless-none"
+                serialize_to_string, when_used="json-unless-none"
             ),
         )
 
