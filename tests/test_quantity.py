@@ -2,11 +2,12 @@
 Test that (de)serialization works
 """
 
-from astropy import units as u
-from astropydantic import AstroPydanticQuantity
-from pydantic import BaseModel
 import pytest
-from pydantic import ValidationError
+from astropy import units as u
+from pydantic import BaseModel, ValidationError
+
+from astropydantic import AstroPydanticQuantity
+
 
 def test_quantity_core():
     class TestModel(BaseModel):
@@ -22,6 +23,7 @@ def test_quantity_core():
     json = m.model_dump_json()
     TestModel.model_validate_json(json)
 
+
 def test_quantity_from_string():
     class TestModel(BaseModel):
         x: AstroPydanticQuantity
@@ -35,6 +37,7 @@ def test_quantity_from_string():
 
     json = m.model_dump_json()
     TestModel.model_validate_json(json)
+
 
 def test_quantity_obj():
     class TestModel(BaseModel):
@@ -79,7 +82,6 @@ def test_quantity_arr_from_dict():
 
     json = m.model_dump_json()
     TestModel.model_validate_json(json)
-
 
 
 def test_indexed_units():

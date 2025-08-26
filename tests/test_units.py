@@ -3,8 +3,10 @@ Test that (de)serialization works
 """
 
 from astropy import units as u
-from astropydantic import AstroPydanticUnit
 from pydantic import BaseModel
+
+from astropydantic import AstroPydanticUnit
+
 
 def test_unit_string():
     class TestModel(BaseModel):
@@ -32,7 +34,7 @@ def test_unit_type():
     serialized = m.model_dump()
 
     reconstructed = TestModel.model_validate(serialized)
-    
+
     assert isinstance(reconstructed.x, u.core.UnitBase)
 
     json = m.model_dump_json()

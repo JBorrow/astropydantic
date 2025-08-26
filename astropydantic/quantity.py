@@ -1,9 +1,8 @@
 from typing import Annotated, Any
-from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, TypeAdapter
+
+from astropy.units import Quantity, Unit
+from pydantic import GetCoreSchemaHandler
 from pydantic_core import core_schema
-from astropy.units import Quantity, Unit, UnitBase
-from pydantic.json_schema import JsonSchemaValue
-import typing
 
 
 class _AstropyQuantityPydanticTypeAnnotation(type):
@@ -45,7 +44,7 @@ class _AstropyQuantityPydanticTypeAnnotation(type):
             except TypeError:
                 # Not iterable, easy.
                 return {"value": q.value, "unit": q.unit.to_string()}
-            
+
         str_schema = core_schema.chain_schema(
             [
                 core_schema.str_schema(),
@@ -69,15 +68,17 @@ class _AstropyQuantityPydanticTypeAnnotation(type):
                 json_serialize_value, when_used="json-unless-none"
             ),
         )
-    
+
     def __getitem__(cls, unit: Unit):
         """Implement support for AstroPydanticQuantity[<unit>]."""
 
         class _AstropyQuantityPydanticTypeAnnotationWithUnit:
             @classmethod
             def __get_pydantic_core_schema__(cls, _source_type: Any, _handler: Any):
-                base = _AstropyQuantityPydanticTypeAnnotation.__get_pydantic_core_schema__(
-                    _source_type, _handler
+                base = (
+                    _AstropyQuantityPydanticTypeAnnotation.__get_pydantic_core_schema__(
+                        _source_type, _handler
+                    )
                 )
                 with_unit = core_schema.chain_schema(
                     [
@@ -91,6 +92,7 @@ class _AstropyQuantityPydanticTypeAnnotation(type):
                 return with_unit
 
         return Annotated[Quantity, _AstropyQuantityPydanticTypeAnnotationWithUnit]
+
 
 class AstroPydanticQuantity(Quantity, metaclass=_AstropyQuantityPydanticTypeAnnotation):
     pass

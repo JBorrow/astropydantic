@@ -1,8 +1,9 @@
-from typing import Annotated, Any
-from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, TypeAdapter
-from pydantic_core import core_schema
+from typing import Any
+
 from astropy.units import Unit, UnitBase
-from pydantic.json_schema import JsonSchemaValue
+from pydantic import GetCoreSchemaHandler
+from pydantic_core import core_schema
+
 
 class _AstropyUnitPydanticTypeAnnotation(type):
     @classmethod
@@ -17,9 +18,9 @@ class _AstropyUnitPydanticTypeAnnotation(type):
         from_string_schema = core_schema.chain_schema(
             [
                 core_schema.str_schema(),
-                core_schema.no_info_plain_validator_function(validate_from_string)
+                core_schema.no_info_plain_validator_function(validate_from_string),
             ]
-        ) 
+        )
 
         return core_schema.json_or_python_schema(
             json_schema=from_string_schema,
@@ -34,7 +35,7 @@ class _AstropyUnitPydanticTypeAnnotation(type):
                 lambda instance: str(instance), when_used="json-unless-none"
             ),
         )
-    
+
 
 class AstroPydanticUnit(UnitBase, metaclass=_AstropyUnitPydanticTypeAnnotation):
     pass
