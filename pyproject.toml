@@ -10,6 +10,10 @@ dependencies = [
     "pydantic",
     "astropy"
 ]
+authors = [
+  {name = "Josh Borrow", email = "josh@joshborrow.com"},
+  {name = "Maximilian Linhoff"}
+]
 
 [project.optional-dependencies]
 dev = [
