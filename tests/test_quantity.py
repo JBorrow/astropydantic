@@ -69,6 +69,21 @@ def test_quantity_arr():
     TestModel.model_validate_json(json)
 
 
+def test_quantity_ndarr():
+    class TestModel(BaseModel):
+        x: AstroPydanticQuantity
+
+    m = TestModel(x=u.Quantity(value=[[0.1, 0.2, 0.3], [0.1, 0.2, 0.3]], unit="km"))
+
+    assert isinstance(m.x, u.Quantity)
+
+    serialized = m.model_dump()
+    TestModel.model_validate(serialized)
+
+    json = m.model_dump_json()
+    TestModel.model_validate_json(json)
+
+
 def test_quantity_arr_from_dict():
     class TestModel(BaseModel):
         x: AstroPydanticQuantity
