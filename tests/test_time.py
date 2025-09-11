@@ -46,6 +46,12 @@ def test_unit_datetime():
     json = m.model_dump_json()
     TestModel.model_validate_json(json)
 
+    # since TIME_OUTPUT_FORMAT is datetime, also an mjd format datetime should
+    # be converted to datetime
+    m = TestModel(x=t.Time(58000, format="mjd"))
+    serialized = m.model_dump()
+    assert isinstance(serialized["x"], datetime.datetime)
+
 
 def test_unit_disallowed():
     import astropydantic
@@ -61,3 +67,4 @@ def test_unit_disallowed():
 
     with pytest.raises(ValueError):
         m.model_dump()
+
