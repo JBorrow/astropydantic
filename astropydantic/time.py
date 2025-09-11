@@ -25,17 +25,26 @@ class _AstropyTimePydanticTypeAnnotation:
         )
 
         def serialize(v: Time):
-            from astropydantic import TIME_OUTPUT_FORMAT
+            from astropydantic import TIME_OUTPUT_FORMAT, TIME_OUTPUT_SCALE
 
-            if "isot" in TIME_OUTPUT_FORMAT:
-                precision = int(TIME_OUTPUT_FORMAT.split("_")[1])
-                return Time(v, precision=precision).utc.isot
-            elif "datetime" in TIME_OUTPUT_FORMAT:
-                return v.value
+            fmt = TIME_OUTPUT_FORMAT
+            try:
+                v = getattr(v, TIME_OUTPUT_SCALE)
+            except AttributeError:
+                raise ValueError(f"Unsupported TIME_OUTPUT_SCALE: {TIME_OUTPUT_SCALE}")
 
-            raise ValueError(
-                "Only isot_X and datetime are supported time output values"
-            )
+            # handle special case of precision with isot
+            if "iso" in fmt:
+                fmt, _, precision = fmt.partition("_")
+                precision = int(precision)
+                v = Time(v, precision=precision, copy=False)
+
+            try:
+                return getattr(v, fmt)
+            except AttributeError:
+                raise ValueError(
+                    f"Unsupported TIME_OUTPUT_FORMAT: {TIME_OUTPUT_FORMAT}"
+                )
 
         return core_schema.json_or_python_schema(
             python_schema=core_schema.union_schema(
