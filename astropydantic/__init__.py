@@ -1,5 +1,6 @@
 UNIT_STRING_FORMAT = "vounit"  # Must be at the top to prevent circular imports
 TIME_OUTPUT_FORMAT = "isot_9"  # Must be at the top to prevent circular imports
+TIME_OUTPUT_SCALE = "utc"
 
 from .quantity import AstroPydanticQuantity  # noqa: E402 I001
 from .unit import AstroPydanticUnit  # noqa: E402 I001
