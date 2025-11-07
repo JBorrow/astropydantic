@@ -141,3 +141,43 @@ print(model.model_dump_json())
 ```
 
 The string format defaults to `isot_9`.
+
+### Coordinates
+
+Added in `0.0.3`, Coordinates are handled through the general `ICRS` or
+`SkyCoord` interface. So far, only the `icrs` frame is supported.  You can
+instantiate an `AstroPydanticICRS` either directly with an `ICRS` object, or a
+`SkyCoord(frame="icrs")` object. However, after serialization, all values are
+represented internally as `ICRS` objects. The individual `ra` and `dec` 
+components of `ICRS` are internally treated as `AstroPydanticQuantity`
+objects, with matching serialization rules.
+
+```python
+from astropy.coordinates import SkyCoord, ICRS
+from astropy import units as u
+from pydantic import BaseModel
+from astropydantic import AstroPydanticICRS
+
+class MyModel(BaseModel):
+  a: AstroPydanticICRS
+
+sky_coord = SkyCoord(ra=20.0, dec=10.0, unit="deg")
+icrs = ICRS(ra=5.0 * u.deg, dec=-5.0 * u.deg)
+
+model = MyModel(a=sky_coord)
+print(model)
+>>> a=<ICRS Coordinate: (ra, dec) in deg
+    (20., 10.)>
+
+model = MyModel(a=icrs)
+print(model)
+>>> a=<ICRS Coordinate: (ra, dec) in deg
+    (5., -5.)>
+
+print(model.model_dump())
+>>> {'a': <ICRS Coordinate: (ra, dec) in deg
+    (5., -5.)>}
+
+print(model.model_dump_json())
+>>> {"a":{"ra":{"value":5.0,"unit":"deg"},"dec":{"value":-5.0,"unit":"deg"}}}
+```
