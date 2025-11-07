@@ -4,12 +4,14 @@ AstroPydantic
 An (**unofficial**) package providing pydantic typing support for astropy
 unit types. Can be used to de(serialize) astropy quantities and units.
 
-We provide three types:
+We provide four types:
 
 - `AstroPydanticUnit`: an overlay for `astropy.units.UnitBase` (all unit types).
 - `AstroPydanticQuantity`: an overlay for `astropy.units.Quantity`, including
   array types.
 - `AstroPydanticTime`: an overlay for `astropy.time.Time`.
+- `AstroPydanticICRS`: an overlay for `astropy.coordinates.ICRS` and
+  `astropy.coordinates.SkyCoord`.
 
 Installation
 ------------
