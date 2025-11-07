@@ -158,6 +158,9 @@ from astropy import units as u
 from pydantic import BaseModel
 from astropydantic import AstroPydanticICRS
 
+class MyModel(BaseModel):
+  a: AstroPydanticICRS
+
 sky_coord = SkyCoord(ra=20.0, dec=10.0, unit="deg")
 icrs = ICRS(ra=5.0 * u.deg, dec=-5.0 * u.deg)
 
