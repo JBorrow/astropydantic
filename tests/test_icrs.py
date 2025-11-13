@@ -52,7 +52,12 @@ def test_skycoord_failure():
     class TestModel(BaseModel):
         x: AstroPydanticICRS
 
-    coordinate = SkyCoord(ra=20.0 * u.deg, dec=10.0 * u.deg, frame="fk5")
+    extragalactic = SkyCoord(ra=20.0 * u.deg, dec=10.0 * u.deg, frame="fk5")
+    galactic = SkyCoord(20.0, 20.0, unit="deg", frame="galactic")
+    altaz = SkyCoord(alt=45, az=120, unit="deg", frame="altaz")
+
+    TestModel(x=extragalactic)
+    TestModel(x=galactic)
 
     with pytest.raises(TypeError):
-        TestModel(x=coordinate)
+        TestModel(x=altaz)

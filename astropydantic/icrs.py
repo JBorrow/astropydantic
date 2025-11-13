@@ -33,7 +33,13 @@ class _AstropyICRSPydanticTypeAnnotation(type(ICRS)):
             if isinstance(x, ICRS):
                 return x
             if isinstance(x, SkyCoord):
-                return ICRS(ra=x.ra, dec=x.dec)
+                try:
+                    if not x.is_transformable_to("icrs"):
+                        raise TypeError("SkyCoord frame is not transformable to ICRS")
+                    x = x.transform_to("icrs")
+                    return ICRS(ra=x.ra, dec=x.dec)
+                except Exception as e:
+                    raise TypeError(f"Failed to transform SkyCoord to ICRS: {e}")
             return x
 
         def json_serialize_value(c: ICRS):
