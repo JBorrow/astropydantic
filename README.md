@@ -183,3 +183,15 @@ print(model.model_dump())
 print(model.model_dump_json())
 >>> {"a":{"ra":{"value":5.0,"unit":"deg"},"dec":{"value":-5.0,"unit":"deg"}}}
 ```
+An important note here is that if you supply points in a frame that
+is transformable to ICRS as a `SkyCoord`, we internally convert them
+to the ICRS frame. For example, following on from the above:
+```python
+fk4_coord = SkyCoord(ra=20.0, dec=10.0, unit="deg", frame="fk4")
+
+model = MyModel(a=fk4_coord)
+print(model)
+>>> a=<ICRS Coordinate: (ra, dec) in deg
+    (20.65792843, 10.26105602)
+```
+If a coordinate frame is not convertible, we raise a `TypeError`.
