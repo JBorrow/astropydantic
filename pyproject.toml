@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "astropydantic"
-version = "0.0.4"
+version = "0.0.5"
 requires-python = ">=3.11"
 readme = "README.md"
 dependencies = [
@@ -23,6 +23,8 @@ dev = [
     "coverage",
     "pytest-cov",
     "pre-commit",
+    "fastapi",
+    "httpx"
 ]
 
 [tool.ruff.lint]
