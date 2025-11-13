@@ -28,6 +28,14 @@ class _AstropyICRSPydanticTypeAnnotation(type(ICRS)):
             ]
         )
 
+        def validate_skycoord(x: Any) -> ICRS:
+            """Convert SkyCoord -> ICRS, or passthrough if already ICRS."""
+            if isinstance(x, ICRS):
+                return x
+            if isinstance(x, SkyCoord):
+                return ICRS(ra=x.ra, dec=x.dec)
+            return x
+
         def json_serialize_value(c: ICRS):
             # Serialize to the native types whne going to JSON.
             from astropydantic import UNIT_STRING_FORMAT
@@ -43,25 +51,30 @@ class _AstropyICRSPydanticTypeAnnotation(type(ICRS)):
                 },
             }
 
-        def validate_icrs_like(value):
-            if isinstance(value, ICRS):
-                return value
-            if isinstance(value, SkyCoord):
-                if getattr(value.frame, "name", None) == "icrs":
-                    # Coerce to an actual ICRS instance to unify type
-                    return ICRS(ra=value.ra, dec=value.dec)
-                raise TypeError("SkyCoord must have frame='icrs'")
-            raise TypeError("Expected ICRS or SkyCoord(frame='icrs')")
-
-        python_schema = core_schema.union_schema(
+        str_schema = core_schema.chain_schema(
             [
-                core_schema.no_info_plain_validator_function(validate_icrs_like),
-                dict_schema,
+                core_schema.str_schema(),
             ]
         )
 
+        python_schema = core_schema.chain_schema(
+            [
+                core_schema.union_schema(
+                    [
+                        core_schema.is_instance_schema(ICRS),
+                        core_schema.is_instance_schema(SkyCoord),
+                        dict_schema,
+                        str_schema,
+                    ]
+                ),
+                core_schema.no_info_plain_validator_function(validate_skycoord),
+            ]
+        )
+
+        json_schema = core_schema.union_schema([dict_schema, str_schema])
+
         return core_schema.json_or_python_schema(
-            json_schema=dict_schema,
+            json_schema=json_schema,
             python_schema=python_schema,
             serialization=core_schema.plain_serializer_function_ser_schema(
                 json_serialize_value, when_used="json-unless-none"
