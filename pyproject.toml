@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "astropydantic"
-version = "0.0.5"
-requires-python = ">=3.11"
+version = "0.0.6"
+requires-python = ">=3.10"
 readme = "README.md"
 dependencies = [
     "pydantic>2.0.0",
