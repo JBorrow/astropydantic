@@ -6,7 +6,7 @@ import datetime
 
 import pytest
 from astropy import time as t
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 
 from astropydantic import AstroPydanticTime
 
@@ -97,3 +97,11 @@ def test_unit_disallowed():
 
     with pytest.raises(ValueError):
         m.model_dump()
+
+
+def test_unix():
+    ta = TypeAdapter(AstroPydanticTime)
+
+    parsed = ta.validate_python(1755511106.116)
+    expected = t.Time(1755511106.116, format="unix")
+    assert parsed == expected
