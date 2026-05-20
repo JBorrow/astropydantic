@@ -17,12 +17,22 @@ class _AstropyTimePydanticTypeAnnotation:
             ]
         )
 
+        from_float = core_schema.chain_schema(
+            [
+                core_schema.float_schema(),
+                core_schema.no_info_plain_validator_function(
+                    lambda t: Time(t, format="unix")
+                ),
+            ]
+        )
+
         from_datetime = core_schema.chain_schema(
             [
                 core_schema.datetime_schema(),
                 core_schema.no_info_plain_validator_function(lambda d: Time(d)),
             ]
         )
+        schemas = [from_string, from_float, from_datetime]
 
         def serialize(v: Time):
             from astropydantic import TIME_OUTPUT_FORMAT, TIME_OUTPUT_SCALE
@@ -48,9 +58,9 @@ class _AstropyTimePydanticTypeAnnotation:
 
         return core_schema.json_or_python_schema(
             python_schema=core_schema.union_schema(
-                [core_schema.is_instance_schema(TimeBase), from_string, from_datetime]
+                [core_schema.is_instance_schema(TimeBase), *schemas]
             ),
-            json_schema=core_schema.union_schema([from_string, from_datetime]),
+            json_schema=core_schema.union_schema(schemas),
             serialization=core_schema.plain_serializer_function_ser_schema(
                 serialize,
             ),
